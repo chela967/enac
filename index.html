@@ -79,7 +79,10 @@
   }
   .nav-cta:hover { background: var(--gold-light) !important; }
 
-  .burger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+  .burger {
+    display: none; cursor: pointer; flex-direction: column; gap: 5px;
+    background: none; border: none; padding: 0;
+  }
   .burger span { display: block; width: 24px; height: 2px; background: white; transition: all 0.3s; }
 
   /* ── HERO ── */
@@ -405,43 +408,52 @@
 
   /* ── MOBILE ── */
   @media (max-width: 900px) {
+    nav { padding: 0 20px; }
     section { padding: 80px 5%; }
 
-    .nav-links { display: none; }
-    .burger { display: flex; }
-    .nav-links.open {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      position: fixed;
-      top: 70px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--green-deep);
-      padding: 32px 5%;
-      gap: 18px;
-      z-index: 999;
-      overflow-y: auto;
-      width: 100vw;
+    .logo img {
+      width: 58px !important;
+      height: 58px !important;
     }
+
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      right: 20px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      padding: 16px;
+      background: rgba(26,74,46,0.98);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+    }
+    .nav-links.open { display: flex !important; }
+    .nav-links li { width: 100%; }
     .nav-links.open a {
-      color: rgba(255,255,255,0.9);
+      display: block;
+      color: rgba(255,255,255,0.95);
       font-size: 1rem;
       padding: 12px 0;
       border-bottom: 1px solid rgba(255,255,255,0.1);
       width: 100%;
     }
+    .nav-links.open li:last-child a { border-bottom: none; }
     .nav-links.open a.nav-cta {
       background: var(--gold);
       color: var(--green-deep) !important;
-      padding: 12px 20px;
-      border-radius: 4px;
+      padding: 12px 16px;
+      border-radius: 6px;
       border-bottom: none;
-      display: inline-block;
-      margin-top: 8px;
-      width: auto;
+      margin-top: 6px;
+      width: 100%;
+      text-align: center;
     }
+
+    .burger { display: flex; }
 
     #hero {
       min-height: auto;
@@ -491,12 +503,12 @@
   }
 
   @media (max-width: 600px) {
-    nav { padding: 0 20px; }
+    nav { padding: 0 16px; }
     section { padding: 70px 20px; }
 
     .logo { gap: 8px; }
     .logo-text strong { font-size: 1rem; }
-    .logo-text span { font-size: 0.62rem; letter-spacing: 0.5px; }
+    .logo-text span { display: none; }
 
     .hero-content h1 { font-size: clamp(2rem, 9vw, 2.6rem); }
     .hero-content p { font-size: 0.98rem; }
@@ -563,9 +575,9 @@
     <li><a href="#focus">Focus Areas</a></li>
     <li><a href="#contact" class="nav-cta">Contact Us</a></li>
   </ul>
-  <div class="burger" id="burger">
+  <button class="burger" id="burger" type="button" aria-label="Toggle navigation" aria-controls="navLinks" aria-expanded="false">
     <span></span><span></span><span></span>
-  </div>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -982,11 +994,24 @@
   // Burger menu
   const burger = document.getElementById('burger');
   const navLinks = document.getElementById('navLinks');
+
   burger.addEventListener('click', () => {
-    navLinks.classList.toggle('open');
+    const isOpen = navLinks.classList.toggle('open');
+    burger.setAttribute('aria-expanded', String(isOpen));
   });
+
   navLinks.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => navLinks.classList.remove('open'));
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 900) {
+      navLinks.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    }
   });
 
   // Scroll reveal
